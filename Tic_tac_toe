@@ -1,0 +1,221 @@
+package src;
+
+//  author:  ValitovGaziz
+//  date:    22.02.2022
+//  project: sberfight
+
+import java.util.Scanner;
+
+public class Tic_tac_toe {
+
+    final static Scanner scanner = new Scanner(System.in);
+
+    static char next = 'X';
+
+    public static void main(String[] args) {
+
+        char[][] charArray = new char[3][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                charArray[i][j] = ' ';
+            }
+        }
+        printCellsFromCharArray(charArray);
+
+        boolean game = true;
+
+        while (game) {
+            nextMotion(charArray);
+            printCellsFromCharArray(charArray);
+            game = checkAndPrintResult(charArray);
+        }
+
+
+
+
+    }
+
+    private static void nextMotion(char[][] charArray) {
+
+
+        while (true) {
+            System.out.print("Enter the coordinates: ");
+
+            String coordinates = scanner.nextLine();
+
+            String first = null;
+            String second = null;
+
+            if (coordinates.split(" ").length == 2) {
+                first = coordinates.split(" ")[0];
+                second = coordinates.split(" ")[1];
+            } else  {
+                System.out.println("You should enter numbers!");
+                continue;
+            }
+
+            int row = 0;
+            int column = 0;
+
+            try {
+                row = Integer.parseInt(coordinates.split(" ")[0]);
+                column = Integer.parseInt(coordinates.split(" ")[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("You should enter numbers!");
+                continue;
+            }
+
+
+
+            if (row < 1 || row > 3 || column < 1 || column > 3) {
+                System.out.println("Coordinates should be from 1 to 3!");
+                continue;
+            }
+
+            char charAtCoordinates = charArray[row - 1][column - 1];
+            if (charAtCoordinates == 'X' || charAtCoordinates == 'O') {
+                System.out.println("This cell is occupied! Choose another one!");
+                continue;
+            }
+
+            charArray[row - 1][column - 1] = next;
+            if (next == 'X') {
+                next = 'O';
+            } else {
+                next = 'X';
+            }
+            break;
+
+        }
+    }
+
+    public static boolean checkAndPrintResult(char[][] charArray) {
+
+        int XTimes = countChars(charArray, 'X');
+        int OTimes = countChars(charArray, 'O');
+
+        int winLinesForX = countWinLines(charArray, 'X');
+        int winLinesForO = countWinLines(charArray, 'O');
+
+        if (winLinesForX > 0 && winLinesForO > 0) {
+            System.out.println("Impossible");
+            return false;
+        }
+
+        if (XTimes + OTimes == 9 && winLinesForX == 0 && winLinesForO == 0) {
+            System.out.println("Draw");
+            return false;
+        }
+
+        if (XTimes + OTimes < 9 && winLinesForX == 0 && winLinesForO == 0) {
+            return true;
+        }
+
+        if (winLinesForX > 0) {
+            System.out.println("X wins");
+            return false;
+        } else {
+            System.out.println("O wins");
+            return false;
+        }
+    }
+
+    public static int countWinLines(char[][] charArray, char ch) {
+        int winLineCounter = 0;
+
+
+        boolean winLine = true;
+
+        for (int i = 0; i < 3; i++) {
+            winLine = true;
+            for (int j = 0; j < 3; j++) {
+                if (charArray[i][j] != ch) {
+                    winLine = false;
+                    break;
+                }
+            }
+            if (winLine) {
+                winLineCounter++;
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            winLine = true;
+            for (int j = 0; j < 3; j++) {
+                if (charArray[j][i] != ch) {
+                    winLine = false;
+                    break;
+                }
+            }
+            if (winLine) {
+                winLineCounter++;
+            }
+        }
+
+        winLine = true;
+        for (int i = 0; i < 3; i++) {
+            if (charArray[i][i] != ch) {
+                winLine = false;
+                break;
+            }
+        }
+        if (winLine) {
+            winLineCounter++;
+        }
+
+        winLine = true;
+        for (int i = 0; i < 3; i++) {
+            if (charArray[2 - i][i] != ch) {
+                winLine = false;
+                break;
+            }
+        }
+        if (winLine) {
+            winLineCounter++;
+        }
+
+        return winLineCounter;
+    }
+
+    private static char[][] getCharArrayFrom(String lines) {
+        char[][] charArray = new char[3][3];
+        int index = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                charArray[i][j] = lines.charAt(index++);
+            }
+        }
+        return charArray;
+    }
+
+    public static int countChars(char[][] charArray, char ch) {
+        int counter = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (charArray[i][j] == ch) {
+                    counter++;
+                }
+
+            }
+        }
+        return counter;
+    }
+
+    public static void printCellsFromCharArray(char[][] charArray) {
+        System.out.println("---------");
+        System.out.printf("| %s %s %s |%n", charArray[0][0], charArray[0][1], charArray[0][2]);
+        System.out.printf("| %s %s %s |%n", charArray[1][0], charArray[1][1], charArray[1][2]);
+        System.out.printf("| %s %s %s |%n", charArray[2][0], charArray[2][1], charArray[2][2]);
+        System.out.println("---------");
+    }
+
+    public static void printCellsFromString(String line) {
+        System.out.println("---------");
+        System.out.printf("| %s %s %s |%n", line.charAt(0), line.charAt(1), line.charAt(2));
+        System.out.printf("| %s %s %s |%n", line.charAt(3), line.charAt(4), line.charAt(5));
+        System.out.printf("| %s %s %s |%n", line.charAt(6), line.charAt(7), line.charAt(8));
+        System.out.println("---------");
+    }
+
+
+}
